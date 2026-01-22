@@ -1,17 +1,16 @@
-#include "graphs.h"
 #include <stdlib.h>
+#include "graphs.h"
 
 /**
- * graph_create - Allocates memory to store a graph_t structure
+ * graph_create - Allocates a graph structure
  *
- * Return: Pointer to the allocated structure, or NULL on failure
+ * Return: A pointer to the allocated structure, or NULL on failure
  */
 graph_t *graph_create(void)
 {
-	graph_t *graph;
+	graph_t *graph = malloc(sizeof(graph_t));
 
-	graph = malloc(sizeof(graph_t));
-	if (graph == NULL)
+	if (!graph)
 		return (NULL);
 
 	graph->nb_vertices = 0;

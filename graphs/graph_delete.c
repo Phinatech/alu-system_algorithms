@@ -10,14 +10,11 @@ void graph_delete(graph_t *graph)
     size_t i, j;
     vertex_t *v;
     edge_t *e, *temp;
-
     if (!graph)
         return;
-
     for (i = 0; i < graph->nb_vertices; i++)
     {
         v = graph->vertices[i];
-        
         for (j = 0; j < v->nb_edges; j++)
         {
             e = v->edges[j];
@@ -28,13 +25,10 @@ void graph_delete(graph_t *graph)
                 e = temp;
             }
         }
-        
         free(v->edges);
         free(v->content);
         free(v);
     }
-    
     free(graph->vertices);
     free(graph);
 }
-

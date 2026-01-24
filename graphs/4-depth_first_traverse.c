@@ -50,5 +50,6 @@ size_t depth_first_traverse(const graph_t *graph,
 
 	depth = dfs_traverse_rec(graph->vertices, visited, 0, action);
 	free(visited);
-	return (depth););
+	return (depth);
+);
 }

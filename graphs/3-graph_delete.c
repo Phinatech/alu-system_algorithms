@@ -1,28 +1,14 @@
-
 #include "graphs.h"
-#include <stdlib.h>
 
 /**
- * graph_delete - Deallocates a graph
- * @graph: Pointer to the graph to delete
+ * graph_delete - completely deallocates a graph_t
+ * @graph: pointer to the graph_t to be deleted
  */
 void graph_delete(graph_t *graph)
 {
-	size_t i;
-	vertex_t *v;
-
 	if (!graph)
 		return;
-
-	for (i = 0; i < graph->nb_vertices; i++)
-	{
-		v = &graph->vertices[i];
-
-		free(v->edges);
-		free(v->content);
-		free(v);
-	}
-
-	free(graph->vertices);
+	FREE(vertex_t, v, graph->vertices, free(v->content);
+	     FREE(edge_t, e, v->edges, NULL;););
 	free(graph);
 }

@@ -2,29 +2,19 @@
 #include <stdlib.h>
 
 /**
- * swap_data - Swaps data between two nodes
- * @node1: First node
- * @node2: Second node
- */
-void swap_data(binary_tree_node_t *node1, binary_tree_node_t *node2)
-{
-	void *temp;
-
-	temp = node1->data;
-	node1->data = node2->data;
-	node2->data = temp;
-}
-
-/**
  * heapify_up - Maintains min heap property by moving node up
  * @heap: Pointer to the heap
  * @node: Node to heapify up
  */
 void heapify_up(heap_t *heap, binary_tree_node_t *node)
 {
+	void *temp;
+
 	while (node->parent && heap->data_cmp(node->data, node->parent->data) < 0)
 	{
-		swap_data(node, node->parent);
+		temp = node->data;
+		node->data = node->parent->data;
+		node->parent->data = temp;
 		node = node->parent;
 	}
 }
@@ -38,16 +28,23 @@ void heapify_up(heap_t *heap, binary_tree_node_t *node)
  */
 binary_tree_node_t *get_node_at_index(binary_tree_node_t *root, size_t index)
 {
-	size_t mask;
+	size_t mask, bit_position;
 
 	if (index == 0)
 		return (root);
 
-	for (mask = 1; mask <= index; mask <<= 1)
+	/* Find the highest bit position */
+	for (mask = index, bit_position = 0; mask > 1; mask >>= 1, bit_position++)
 		;
-	mask >>= 2;
 
-	while (mask)
+	/* Start from the second-highest bit */
+	if (bit_position > 0)
+		mask = 1 << (bit_position - 1);
+	else
+		mask = 0;
+
+	/* Traverse the tree following the bits */
+	while (mask > 0)
 	{
 		if (index & mask)
 			root = root->right;
@@ -79,12 +76,13 @@ binary_tree_node_t *heap_insert(heap_t *heap, void *data)
 		if (new_node == NULL)
 			return (NULL);
 		heap->root = new_node;
-		heap->size++;
+		heap->size = 1;
 		return (new_node);
 	}
 
 	parent_index = (heap->size - 1) / 2;
 	parent = get_node_at_index(heap->root, parent_index);
+	
 	new_node = binary_tree_node(parent, data);
 	if (new_node == NULL)
 		return (NULL);

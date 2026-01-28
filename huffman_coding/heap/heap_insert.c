@@ -19,27 +19,27 @@ binary_tree_node_t *binary_tree_node(binary_tree_node_t *parent, void *data);
  */
 binary_tree_node_t *get_parent(binary_tree_node_t *root, size_t index)
 {
-	size_t parent_idx, path;
-	int bit;
+	size_t parent_idx;
+	char path[64];
+	int i, depth;
 
 	if (index == 0)
 		return (NULL);
 
 	parent_idx = (index - 1) / 2;
-	path = parent_idx;
 
 	if (parent_idx == 0)
 		return (root);
 
-	/* Find the path to parent using binary representation */
-	for (bit = 0; (1U << bit) <= parent_idx; bit++)
-		;
-	bit--;
+	/* Build path in binary */
+	depth = 0;
+	for (i = parent_idx; i > 0; i >>= 1)
+		path[depth++] = (i & 1) ? 'R' : 'L';
 
-	while (bit > 0)
+	/* Traverse from root following the path (in reverse) */
+	for (i = depth - 2; i >= 0; i--)
 	{
-		bit--;
-		if ((path >> bit) & 1)
+		if (path[i] == 'R')
 			root = root->right;
 		else
 			root = root->left;

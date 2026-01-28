@@ -30,31 +30,32 @@ void heapify_up(heap_t *heap, binary_tree_node_t *node)
 }
 
 /**
- * get_parent_node - Gets the parent node for insertion at given index
+ * get_node_at_index - Gets node at specific index using level-order
  * @root: Root of the tree
- * @index: Index where new node will be inserted
- * @size: Current size of heap
+ * @index: Index of the node to find
  *
- * Return: Pointer to parent node
+ * Return: Pointer to the node at index
  */
-binary_tree_node_t *get_parent_node(binary_tree_node_t *root, size_t index,
-		size_t size)
+binary_tree_node_t *get_node_at_index(binary_tree_node_t *root, size_t index)
 {
-	size_t parent_idx;
+	size_t mask;
 
 	if (index == 0)
-		return (NULL);
-
-	parent_idx = (index - 1) / 2;
-
-	if (parent_idx == 0)
 		return (root);
 
-	if (index < size / 2)
-		return (get_parent_node(root->left, index - (parent_idx + 1), size / 2));
-	else
-		return (get_parent_node(root->right, index - (size / 2 + parent_idx),
-					size - size / 2));
+	for (mask = 1; mask <= index; mask <<= 1)
+		;
+	mask >>= 2;
+
+	while (mask)
+	{
+		if (index & mask)
+			root = root->right;
+		else
+			root = root->left;
+		mask >>= 1;
+	}
+	return (root);
 }
 
 /**
@@ -67,6 +68,7 @@ binary_tree_node_t *get_parent_node(binary_tree_node_t *root, size_t index,
 binary_tree_node_t *heap_insert(heap_t *heap, void *data)
 {
 	binary_tree_node_t *new_node, *parent;
+	size_t parent_index;
 
 	if (heap == NULL || data == NULL)
 		return (NULL);
@@ -81,7 +83,8 @@ binary_tree_node_t *heap_insert(heap_t *heap, void *data)
 		return (new_node);
 	}
 
-	parent = get_parent_node(heap->root, heap->size, heap->size);
+	parent_index = (heap->size - 1) / 2;
+	parent = get_node_at_index(heap->root, parent_index);
 	new_node = binary_tree_node(parent, data);
 	if (new_node == NULL)
 		return (NULL);

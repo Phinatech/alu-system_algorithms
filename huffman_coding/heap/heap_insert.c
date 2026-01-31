@@ -38,23 +38,24 @@ void heapify_up(heap_t *heap, binary_tree_node_t *node)
  */
 binary_tree_node_t *get_node_at_index(binary_tree_node_t *root, size_t index)
 {
-	size_t depth, level, path;
-	int bit;
+	char path[32];
+	int depth = 0, i;
+	size_t idx = index + 1;
 
 	if (index == 0)
 		return (root);
 
-	/* Calculate depth of the node */
-	for (depth = 0, level = 1; level <= index; depth++)
-		level = (level << 1) + 1;
-
-	/* Get path to node (relative position in its level) */
-	path = index - ((1 << depth) - 1);
-
-	/* Traverse from root following the path */
-	for (bit = depth - 1; bit >= 0; bit--)
+	/* Build path from MSB to LSB, skipping the leading 1 */
+	while (idx > 1)
 	{
-		if ((path >> bit) & 1)
+		path[depth++] = (idx & 1) ? 'R' : 'L';
+		idx >>= 1;
+	}
+
+	/* Traverse from root following path in reverse */
+	for (i = depth - 1; i >= 0; i--)
+	{
+		if (path[i] == 'R')
 			root = root->right;
 		else
 			root = root->left;

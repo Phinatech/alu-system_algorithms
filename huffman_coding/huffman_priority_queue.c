@@ -24,6 +24,22 @@ int symbol_cmp(void *p1, void *p2)
 }
 
 /**
+ * free_nested - Frees a nested node structure
+ * @data: Pointer to nested node
+ */
+void free_nested(void *data)
+{
+	binary_tree_node_t *node;
+
+	if (!data)
+		return;
+
+	node = (binary_tree_node_t *)data;
+	free(node->data);
+	free(node);
+}
+
+/**
  * huffman_priority_queue - Creates a priority queue for Huffman coding
  * @data: Array of characters
  * @freq: Array of associated frequencies
@@ -50,7 +66,7 @@ heap_t *huffman_priority_queue(char *data, size_t *freq, size_t size)
 		symbol = symbol_create(data[i], freq[i]);
 		if (!symbol)
 		{
-			heap_delete(heap, free);
+			heap_delete(heap, free_nested);
 			return (NULL);
 		}
 
@@ -58,15 +74,15 @@ heap_t *huffman_priority_queue(char *data, size_t *freq, size_t size)
 		if (!node)
 		{
 			free(symbol);
-			heap_delete(heap, free);
+			heap_delete(heap, free_nested);
 			return (NULL);
 		}
 
 		if (!heap_insert(heap, node))
 		{
-			free(node);
 			free(symbol);
-			heap_delete(heap, free);
+			free(node);
+			heap_delete(heap, free_nested);
 			return (NULL);
 		}
 	}

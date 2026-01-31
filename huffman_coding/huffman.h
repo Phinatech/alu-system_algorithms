@@ -2,9 +2,7 @@
 #define HUFFMAN_H
 
 #include <stddef.h>
-
-/* Forward declaration */
-typedef struct heap_s heap_t;
+#include "heap.h"
 
 /**
  * struct symbol_s - Symbol structure

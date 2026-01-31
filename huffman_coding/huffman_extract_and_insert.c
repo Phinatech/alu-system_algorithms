@@ -10,9 +10,8 @@
  */
 int huffman_extract_and_insert(heap_t *priority_queue)
 {
-	binary_tree_node_t *node1, *node2, *parent_node, *new_node;
-	symbol_t *symbol1, *symbol2, *new_symbol;
-	size_t combined_freq;
+	binary_tree_node_t *node1, *node2, *parent;
+	symbol_t *sym1, *sym2, *parent_sym;
 
 	if (!priority_queue || priority_queue->size < 2)
 		return (0);
@@ -23,55 +22,33 @@ int huffman_extract_and_insert(heap_t *priority_queue)
 
 	node2 = heap_extract(priority_queue);
 	if (!node2)
+		return (0);
+
+	sym1 = (symbol_t *)(node1->data);
+	sym2 = (symbol_t *)(node2->data);
+
+	parent_sym = symbol_create(-1, sym1->freq + sym2->freq);
+	if (!parent_sym)
+		return (0);
+
+	parent = binary_tree_node(NULL, parent_sym);
+	if (!parent)
 	{
-		heap_insert(priority_queue, node1);
+		free(parent_sym);
 		return (0);
 	}
 
-	symbol1 = (symbol_t *)((binary_tree_node_t *)node1)->data;
-	symbol2 = (symbol_t *)((binary_tree_node_t *)node2)->data;
+	parent->left = node1;
+	parent->right = node2;
+	node1->parent = parent;
+	node2->parent = parent;
 
-	combined_freq = symbol1->freq + symbol2->freq;
-
-	new_symbol = symbol_create(-1, combined_freq);
-	if (!new_symbol)
+	if (!heap_insert(priority_queue, parent))
 	{
-		heap_insert(priority_queue, node1);
-		heap_insert(priority_queue, node2);
-		return (0);
-	}
-
-	parent_node = binary_tree_node(NULL, new_symbol);
-	if (!parent_node)
-	{
-		free(new_symbol);
-		heap_insert(priority_queue, node1);
-		heap_insert(priority_queue, node2);
-		return (0);
-	}
-
-	parent_node->left = (binary_tree_node_t *)node1;
-	parent_node->right = (binary_tree_node_t *)node2;
-	((binary_tree_node_t *)node1)->parent = parent_node;
-	((binary_tree_node_t *)node2)->parent = parent_node;
-
-	new_node = binary_tree_node(NULL, parent_node);
-	if (!new_node)
-	{
-		free(parent_node);
-		free(new_symbol);
-		heap_insert(priority_queue, node1);
-		heap_insert(priority_queue, node2);
-		return (0);
-	}
-
-	if (!heap_insert(priority_queue, new_node))
-	{
-		free(new_node);
-		free(parent_node);
-		free(new_symbol);
-		heap_insert(priority_queue, node1);
-		heap_insert(priority_queue, node2);
+		parent->left = NULL;
+		parent->right = NULL;
+		free(parent);
+		free(parent_sym);
 		return (0);
 	}
 

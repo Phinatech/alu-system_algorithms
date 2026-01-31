@@ -38,30 +38,34 @@ void heapify_up(heap_t *heap, binary_tree_node_t *node)
 }
 
 /**
- * get_node - Get node at index in level order
- * @root: Root of tree
- * @index: Index to find
+ * find_insertion_point - Find where to insert next node
+ * @root: Root of the heap
+ * @size: Current size of heap
  *
- * Return: Node at index
+ * Return: Parent node where new node should be inserted
  */
-binary_tree_node_t *get_node(binary_tree_node_t *root, size_t index)
+binary_tree_node_t *find_insertion_point(binary_tree_node_t *root, size_t size)
 {
+	size_t path = size + 1;
 	size_t mask = 1;
+	binary_tree_node_t *node = root;
 
-	if (index == 0)
-		return (root);
-
-	while (mask <= index)
+	/* Find the highest bit */
+	while (mask <= path)
 		mask <<= 1;
-	mask >>= 2;
+	mask >>= 2; /* Move to second highest bit */
 
-	while (mask)
+	/* Follow the path to parent of insertion point */
+	while (mask > 1)
 	{
-		root = (index & mask) ? root->right : root->left;
+		if (path & mask)
+			node = node->right;
+		else
+			node = node->left;
 		mask >>= 1;
 	}
 
-	return (root);
+	return (node);
 }
 
 /**
@@ -74,6 +78,7 @@ binary_tree_node_t *get_node(binary_tree_node_t *root, size_t index)
 binary_tree_node_t *heap_insert(heap_t *heap, void *data)
 {
 	binary_tree_node_t *new, *parent;
+	size_t path;
 
 	if (!heap || !data)
 		return (NULL);
@@ -89,10 +94,11 @@ binary_tree_node_t *heap_insert(heap_t *heap, void *data)
 		return (new);
 	}
 
-	parent = get_node(heap->root, (heap->size - 1) / 2);
+	parent = find_insertion_point(heap->root, heap->size);
 	new->parent = parent;
 
-	if (heap->size % 2 == 1)
+	path = heap->size + 1;
+	if (path & 1)
 		parent->left = new;
 	else
 		parent->right = new;

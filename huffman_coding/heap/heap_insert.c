@@ -38,24 +38,26 @@ void heapify_up(heap_t *heap, binary_tree_node_t *node)
  */
 binary_tree_node_t *get_node_at_index(binary_tree_node_t *root, size_t index)
 {
-	size_t mask;
+	size_t depth, level, path;
+	int bit;
 
 	if (index == 0)
 		return (root);
 
-	/* Find the highest bit set in index */
-	for (mask = 1; mask <= index; mask <<= 1)
-		;
-	mask >>= 2;
+	/* Calculate depth of the node */
+	for (depth = 0, level = 1; level <= index; depth++)
+		level = (level << 1) + 1;
 
-	/* Traverse tree following bits in index */
-	while (mask > 0)
+	/* Get path to node (relative position in its level) */
+	path = index - ((1 << depth) - 1);
+
+	/* Traverse from root following the path */
+	for (bit = depth - 1; bit >= 0; bit--)
 	{
-		if (index & mask)
+		if ((path >> bit) & 1)
 			root = root->right;
 		else
 			root = root->left;
-		mask >>= 1;
 	}
 
 	return (root);

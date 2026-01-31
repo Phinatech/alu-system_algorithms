@@ -4,7 +4,7 @@
 
 /**
  * create_parent_node - Creates a parent node from two child nodes
- * @node1: First child node
+ * @node1: First child node  
  * @node2: Second child node
  *
  * Return: Pointer to parent node, or NULL on failure

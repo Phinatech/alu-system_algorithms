@@ -7,13 +7,12 @@
  * @p1: First pointer (binary_tree_node_t containing symbol_t)
  * @p2: Second pointer (binary_tree_node_t containing symbol_t)
  *
- * Return: Difference between frequencies, or data if frequencies equal
+ * Return: Difference between frequencies
  */
 int symbol_cmp(void *p1, void *p2)
 {
 	binary_tree_node_t *node1, *node2;
 	symbol_t *sym1, *sym2;
-	int freq_diff;
 
 	node1 = (binary_tree_node_t *)p1;
 	node2 = (binary_tree_node_t *)p2;
@@ -21,11 +20,7 @@ int symbol_cmp(void *p1, void *p2)
 	sym1 = (symbol_t *)node1->data;
 	sym2 = (symbol_t *)node2->data;
 
-	freq_diff = sym1->freq - sym2->freq;
-	if (freq_diff == 0)
-		return (sym1->data - sym2->data);
-
-	return (freq_diff);
+	return (sym1->freq - sym2->freq);
 }
 
 /**
@@ -94,4 +89,3 @@ heap_t *huffman_priority_queue(char *data, size_t *freq, size_t size)
 
 	return (heap);
 }
-

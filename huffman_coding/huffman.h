@@ -3,6 +3,9 @@
 
 #include <stddef.h>
 
+/* Forward declaration */
+typedef struct heap_s heap_t;
+
 /**
  * struct symbol_s - Symbol structure
  * @data: The character stored
@@ -16,5 +19,6 @@ typedef struct symbol_s
 
 /* Function prototypes */
 symbol_t *symbol_create(char data, size_t freq);
+heap_t *huffman_priority_queue(char *data, size_t *freq, size_t size);
 
 #endif /* HUFFMAN_H */

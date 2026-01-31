@@ -2,31 +2,23 @@
 #include <stdlib.h>
 
 /**
- * binary_tree_node - Creates a binary tree node
- * @parent: Pointer to the parent node
- * @data: Data to store in the node
- *
- * Return: Pointer to the new node, or NULL on failure
- */
-binary_tree_node_t *binary_tree_node(binary_tree_node_t *parent, void *data);
-
-/**
  * swap_data - Swaps data between two nodes
  * @a: First node
  * @b: Second node
  */
 void swap_data(binary_tree_node_t *a, binary_tree_node_t *b)
 {
-	void *tmp = a->data;
+	void *tmp;
 
+	tmp = a->data;
 	a->data = b->data;
 	b->data = tmp;
 }
 
 /**
- * heapify_up - Restores min heap property
- * @heap: Pointer to heap
- * @node: Node to heapify
+ * heapify_up - Maintains min heap property by bubbling up
+ * @heap: Pointer to the heap
+ * @node: Node to bubble up
  */
 void heapify_up(heap_t *heap, binary_tree_node_t *node)
 {
@@ -38,73 +30,75 @@ void heapify_up(heap_t *heap, binary_tree_node_t *node)
 }
 
 /**
- * find_insertion_point - Find where to insert next node
- * @root: Root of the heap
- * @size: Current size of heap
+ * get_node_at_index - Gets node at specified index (level-order)
+ * @root: Root of the tree
+ * @index: Index of the node to find
  *
- * Return: Parent node where new node should be inserted
+ * Return: Pointer to node at index
  */
-binary_tree_node_t *find_insertion_point(binary_tree_node_t *root, size_t size)
+binary_tree_node_t *get_node_at_index(binary_tree_node_t *root, size_t index)
 {
-	size_t path = size + 1;
-	size_t mask = 1;
-	binary_tree_node_t *node = root;
+	size_t mask;
 
-	/* Find the highest bit */
-	while (mask <= path)
-		mask <<= 1;
-	mask >>= 2; /* Move to second highest bit */
+	if (index == 0)
+		return (root);
 
-	/* Follow the path to parent of insertion point */
-	while (mask > 1)
+	/* Find the highest bit set in index */
+	for (mask = 1; mask <= index; mask <<= 1)
+		;
+	mask >>= 2;
+
+	/* Traverse tree following bits in index */
+	while (mask > 0)
 	{
-		if (path & mask)
-			node = node->right;
+		if (index & mask)
+			root = root->right;
 		else
-			node = node->left;
+			root = root->left;
 		mask >>= 1;
 	}
 
-	return (node);
+	return (root);
 }
 
 /**
- * heap_insert - Inserts value in Min Binary Heap
- * @heap: Pointer to heap
- * @data: Data to insert
+ * heap_insert - Inserts a value in a Min Binary Heap
+ * @heap: Pointer to the heap
+ * @data: Pointer to data to store in the new node
  *
- * Return: Pointer to created node, or NULL on failure
+ * Return: Pointer to the created node, or NULL on failure
  */
 binary_tree_node_t *heap_insert(heap_t *heap, void *data)
 {
-	binary_tree_node_t *new, *parent;
-	size_t path;
+	binary_tree_node_t *new_node, *parent;
+	size_t parent_index;
 
 	if (!heap || !data)
 		return (NULL);
 
-	new = binary_tree_node(NULL, data);
-	if (!new)
+	new_node = binary_tree_node(NULL, data);
+	if (!new_node)
 		return (NULL);
 
 	if (heap->size == 0)
 	{
-		heap->root = new;
+		heap->root = new_node;
 		heap->size = 1;
-		return (new);
+		return (new_node);
 	}
 
-	parent = find_insertion_point(heap->root, heap->size);
-	new->parent = parent;
+	parent_index = (heap->size - 1) / 2;
+	parent = get_node_at_index(heap->root, parent_index);
 
-	path = heap->size + 1;
-	if (path & 1)
-		parent->left = new;
+	new_node->parent = parent;
+
+	if (heap->size % 2 == 1)
+		parent->left = new_node;
 	else
-		parent->right = new;
+		parent->right = new_node;
 
 	heap->size++;
-	heapify_up(heap, new);
+	heapify_up(heap, new_node);
 
-	return (new);
+	return (new_node);
 }

@@ -2,22 +2,19 @@
 #include <stdlib.h>
 
 /**
- * heap_create - Creates a Heap data structure
- * @data_cmp: Pointer to a comparison function
- *
- * Return: Pointer to the created heap_t structure, or NULL if it fails
+ * heap_create - allocates a new heap_t heap data structure profile
+ * @data_cmp: pointer to a comparison function
+ * Return: pointer to the created heap_t structure, or NULL on failure
  */
 heap_t *heap_create(int (*data_cmp)(void *, void *))
 {
-	heap_t *heap;
+	heap_t *h;
 
-	heap = malloc(sizeof(heap_t));
-	if (heap == NULL)
+	h = calloc(1, sizeof(heap_t));
+	if (h == NULL)
 		return (NULL);
 
-	heap->size = 0;
-	heap->root = NULL;
-	heap->data_cmp = data_cmp;
+	h->data_cmp = data_cmp;
 
-	return (heap);
+	return (h);
 }
